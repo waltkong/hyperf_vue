@@ -19,6 +19,9 @@ class CompanyController extends BaseController
     {
         parent::__construct();
         $this->logic = $companyLogic;
+
+        $input = $this->request->all();
+        return $this->response->json($input);
     }
 
     /**
@@ -61,26 +64,40 @@ class CompanyController extends BaseController
     }
 
 
+    public function test1()
+    {
+        $input = $this->request->all();
+        return $this->response->json($input);
+    }
+
+
     /**
      * 查一个
      * @Auth("jwt")
+     * @Middlewares({
+     *     @Middleware(OperateLogMiddleware::class)
+     * })
      */
     public function getOne()
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'id' => 'required|numeric',
-            ],
-            [
-                'id.required' => 'id必要',
-            ]
-        );
+//        return $this->response->raw(\GuzzleHttp\json_encode($input)) ;
+//
+//        $this->validateLogic->commonAdminValidate($input,
+//            [
+//                'id' => 'required|numeric',
+//            ],
+//            [
+//                'id.required' => 'id必要',
+//            ]
+//        );
 
         $result = $this->logic->getOne($input);
 
-        return $this->response->json(ResponseLogic::successData($result));
+//        return $this->response->json(ResponseLogic::successData($result));
+
+        return $this->response->json($input);
     }
 
     /**

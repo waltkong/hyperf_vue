@@ -21,6 +21,9 @@ Router::addGroup('/admin/login',function (){
     Router::post('/logout', 'App\Controller\Admin\LoginController@logout');
 });
 
+Router::addGroup('/admin/test1',function (){
+    Router::post('/test1', 'App\Controller\Admin\CompanyController@test1');
+});
 
 //后台需要token访问的
 Router::addGroup('/admin',function (){

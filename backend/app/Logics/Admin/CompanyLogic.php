@@ -6,6 +6,7 @@ use App\Exception\AdminResponseException;
 use App\Logics\Common\DatabaseLogic;
 use App\Logics\Common\PageLogic;
 use App\Model\User\CompanyModel;
+use PDepend\Util\Log;
 
 class CompanyLogic{
 
@@ -40,16 +41,7 @@ class CompanyLogic{
     public function storeOrUpdate($input)
     {
         $id = $input['id'] ?? '';
-        $parent_id = $input['parent_id'] ?? 0;
-
         try{
-            if(empty($parent_id)){
-                $input['level'] = 1;
-            }else{
-                $p_level = CompanyModel::query()->where('id',$parent_id)->value('level');
-                $input['level'] = (int)$p_level + 1;
-            }
-
             if(empty($id)){
                 $findcheck = CompanyModel::query()->where('name',$input['name'])->exists();
                 if($findcheck){
@@ -77,7 +69,11 @@ class CompanyLogic{
     {
         $row = CompanyModel::query()->where('id',$input['id'])->first();
 
-        DatabaseLogic::commonCheckThisCompany($row,'id');
+        if(!is_null($row)){
+            DatabaseLogic::commonCheckThisCompany($row,'id');
+        }
+
+        Log::log(\GuzzleHttp\json_encode($input));
 
         return [
             'data' => $row,

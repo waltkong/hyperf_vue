@@ -69,7 +69,7 @@ class OperateLogMiddleware implements MiddlewareInterface
             return $this->response->json(
                 [
                     'code' => ErrorCode::BUSINESS_ERROR,
-                    'msg' => "记录操作日志出错",
+                    'msg' => $e->getMessage(),
                     'data' => []
                 ]
             );

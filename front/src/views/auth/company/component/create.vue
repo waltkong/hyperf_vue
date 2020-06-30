@@ -3,7 +3,7 @@
   <el-dialog
     :title="title"
     center
-    width="65%"
+    width="100%"
     :visible.sync="dialogVisible"
     :fullscreen="fullscreen"
   >
@@ -133,6 +133,7 @@ export default {
     getFormData(id) {
       const ajaxData = { id: id }
       getOne(ajaxData).then(response => {
+        console.log(response)
         if (isApiSuccess(response.code)) {
           this.defaultForm = {
             id: response.data.data.id,

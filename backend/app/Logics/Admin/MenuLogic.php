@@ -47,8 +47,17 @@ class MenuLogic{
     public function storeOrUpdate(array $input)
     {
         $id = $input['id'] ?? '';
+        $parent_id = $input['parent_id'] ?? '';
         $user = auth()->guard('jwt')->user();
         try{
+
+            if(empty($parent_id)){
+                $input['level'] = 1;
+            }else{
+                $parent_row = MenuModel::query()->where('id',$parent_id)->first();
+                $input['level'] = (int)($parent_row->level) + 1 ;
+            }
+
             if(empty($id)){
                 $findcheck = MenuModel::query()
                     ->where('name',$input['name'])
@@ -64,12 +73,7 @@ class MenuLogic{
                 if($findcheck){
                     throw new AdminResponseException(ErrorCode::ERROR,"该url已存在");
                 }
-                if($input['parent_id'] == 0){
-                    $input['level'] = 1;
-                }else{
-                    $parent_row = MenuModel::query()->where('id',$input['parent_id'])->first();
-                    $input['level'] = (int)($parent_row->level) + 1 ;
-                }
+
                 DatabaseLogic::commonInsertData(MenuModel::class,$input);
 
             }else{
@@ -91,14 +95,6 @@ class MenuLogic{
                 }
 
                 $qs = MenuModel::query()->where('id',$id);
-
-                if($input['parent_id'] == 0){
-                    $input['level'] = 1;
-                }else{
-                    $parent_row = MenuModel::query()->where('id',$input['parent_id'])->first();
-                    $input['level'] = (int)($parent_row->level) + 1 ;
-                }
-
                 DatabaseLogic::commonUpdateData(MenuModel::class,$qs,$input);
 
             }
