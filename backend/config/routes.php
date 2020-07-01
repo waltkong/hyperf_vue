@@ -39,6 +39,8 @@ Router::addGroup('/admin',function (){
     Router::post('/role/deleteOne', 'App\Controller\Admin\RoleController@deleteOne');
     Router::post('/role/getAllMenus', 'App\Controller\Admin\RoleController@getAllMenus');
     Router::post('/role/getThisRoleMenus', 'App\Controller\Admin\RoleController@getThisRoleMenus');
+    Router::post('/role/thisCompanyRoleOptions', 'App\Controller\Admin\RoleController@thisCompanyRoleOptions');
+
 
     Router::post('/company/dataList', 'App\Controller\Admin\CompanyController@dataList');
     Router::post('/company/storeOrUpdate', 'App\Controller\Admin\CompanyController@storeOrUpdate');

@@ -42,17 +42,16 @@ class UserLogic{
 
         $collection = PageLogic::getPaginateListQuerySet($qsFunc(),$input)->get();
 
-        $list = [];
         foreach ($collection as $k => $item){
-            $item->its_roles;
+            $company = $item->its_company;
             unset($item->salt);
             unset($item->password);
-            $list[$k] = $item;
+            $collection[$k]->company_name = $company->name;
         }
 
         $ret = [
-            'data' => $list,
-            'count' =>  count($list),
+            'data' => $collection,
+            'count' =>  count($collection),
             'total' =>  $qsFunc()->count()
         ];
         return PageLogic::commonListDataReturn($ret);
@@ -126,12 +125,14 @@ class UserLogic{
             return [
                 'data' => $row,
                 'roles' => array_column($row->its_roles->toArray(),'name'),
+                'roleIds' => array_column($row->its_roles->toArray(),'id'),
                 'auth_api' => UserModel::getOperatableUrlsByUser($row->id),
             ];
         }else{
             return [
                 'data' => [],
                 'roles' => [],
+                'roleIds' => [],
                 'auth_api' => [],
             ];
         }

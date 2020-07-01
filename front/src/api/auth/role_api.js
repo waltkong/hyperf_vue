@@ -47,3 +47,11 @@ export function getThisRoleMenus(data) {
     data
   })
 }
+
+export function thisCompanyRoleOptions(data) {
+  return request({
+    url: '/admin/role/thisCompanyRoleOptions',
+    method: 'post',
+    data
+  })
+}

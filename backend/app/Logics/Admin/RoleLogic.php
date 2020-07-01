@@ -101,7 +101,8 @@ class RoleLogic{
      * 添加角色，授权的菜单
      * 如果非超管公司，则只把 is_only_super_company = 0 的菜单找出来
      */
-    public function getAllMenus(){
+    public function getAllMenus()
+    {
         $user = auth()->guard('jwt')->user();
         $check = $this->companyLogic->checkCompanyIsSuper($user->company_id);
         if($check){
@@ -117,7 +118,8 @@ class RoleLogic{
     }
 
 
-    public function getThisRoleMenus($input){
+    public function getThisRoleMenus($input)
+    {
         $roleId = $input['id'];
         $menuIds = Role2MenuModel::query()->where('role_id',$roleId)->pluck('menu_id');
         $menus = MenuModel::query()
@@ -139,6 +141,27 @@ class RoleLogic{
         }catch (\Exception $e){
             throw new AdminResponseException(ErrorCode::SYSTEM_INNER_ERROR,$e->getMessage());
         }
+    }
+
+    public function thisCompanyRoleOptions()
+    {
+        $user = auth()->guard('jwt')->user();
+        $roles = RoleModel::query()->where('company_id',$user->company_id)->get()->toArray();
+
+        $resultFunc = function () use($roles){
+            $ret = [];
+            foreach ($roles as $k => $v){
+                $ret[] = [
+                    'key' => $v['id'],
+                    'label' => $v['name'],
+                ];
+            }
+            return $ret;
+        };
+
+        return [
+            'data' => $resultFunc(),
+        ];
     }
 
 }

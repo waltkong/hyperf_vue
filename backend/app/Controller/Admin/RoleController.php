@@ -139,6 +139,18 @@ class RoleController extends BaseController
         return $this->response->json(ResponseLogic::successData($result));
     }
 
+    /**
+     * 获取这个公司所有角色
+     * @Auth("jwt")
+     */
+    public function thisCompanyRoleOptions(){
+        $input = $this->request->all();
+
+        $result = $this->logic->thisCompanyRoleOptions();
+
+        return $this->response->json(ResponseLogic::successData($result));
+    }
+
 
 }
 

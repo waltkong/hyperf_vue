@@ -74,7 +74,7 @@ export default {
         name: '',
         phone: '',
         contact_user: '',
-        admin_status: '',
+        admin_status: '2',
         remark: ''
       },
       rules: {
