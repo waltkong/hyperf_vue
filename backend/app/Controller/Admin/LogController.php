@@ -44,8 +44,6 @@ class LogController extends BaseController
      */
     public function storeOrUpdate()
     {
-        $input = $this->request->all();
-
         return $this->response->json(ResponseLogic::successData([]));
     }
 
@@ -57,16 +55,6 @@ class LogController extends BaseController
     public function getOne()
     {
         $input = $this->request->all();
-
-        $validator = $this->validationFactory->make($input,[
-            'id' => 'required|numeric',
-        ],[
-            'id.required' => '缺少id',
-        ]);
-        if ($validator->fails()){
-            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
-        }
-
         return $this->response->json(ResponseLogic::successData([]));
     }
 
@@ -80,16 +68,6 @@ class LogController extends BaseController
     public function deleteOne()
     {
         $input = $this->request->all();
-
-        $validator = $this->validationFactory->make($input,[
-            'id' => 'required|numeric',
-        ],[
-            'id.required' => '缺少id',
-        ]);
-        if ($validator->fails()){
-            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
-        }
-
         return $this->response->json(ResponseLogic::successData([]));
     }
 

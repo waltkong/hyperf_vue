@@ -24,6 +24,7 @@ class ConfigModel extends Model {
         'group_name',
         'name',
         'value',
+        'type',
         'is_global',
         'company_id',
         'created_at',

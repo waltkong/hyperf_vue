@@ -45,7 +45,6 @@ class ConfigLogic{
     public function storeOrUpdate($input)
     {
         $id = $input['id'] ?? '';
-
         try{
             $user = auth()->guard('jwt')->user();
             $company = $user->its_company;
@@ -53,38 +52,48 @@ class ConfigLogic{
                 //不为超管公司 is_global 参数无效 复写
                 $input['is_global'] = ConfigModel::IS_GLOBAL['NO'];
             }
-
             if(empty($id)){
-                $findcheck = ConfigModel::query()
-                    ->where('group_name',$input['group_name'])
-                    ->where('name',$input['name'])
-                    ->where('company_id',$user->company_id)
-                    ->exists();
-                if($findcheck){
-                    throw new AdminResponseException(ErrorCode::ERROR,"该组名该配置名称已存在");
-                }
-
-                DatabaseLogic::commonInsertData(ConfigModel::class,$input);
-
+                $this->store($input);
             }else{
-                $findcheck = ConfigModel::query()
-                    ->where('group_name',$input['group_name'])
-                    ->where('name',$input['name'])
-                    ->where('id','<>',$id)
-                    ->where('company_id',$user->company_id)
-                    ->exists();
-                if($findcheck){
-                    throw new AdminResponseException(ErrorCode::ERROR,"该组名该配置名称已存在");
-                }
-                $qs = ConfigModel::query()->where('id',$id);
-
-                DatabaseLogic::commonUpdateData(ConfigModel::class,$qs,$input);
-
+                $this->update($input);
             }
         }catch (\Exception $e){
             throw new AdminResponseException(ErrorCode::SYSTEM_INNER_ERROR,$e->getMessage());
         }
 
+    }
+
+    public function update($input)
+    {
+        $user = auth()->guard('jwt')->user();
+        $findcheck = ConfigModel::query()
+            ->where('group_name',$input['group_name'])
+            ->where('name',$input['name'])
+            ->where('id','<>',$input['id'])
+            ->where('company_id',$user->company_id)
+            ->exists();
+        if($findcheck){
+            throw new AdminResponseException(ErrorCode::ERROR,"该组名该配置名称已存在");
+        }
+        $data = DatabaseLogic::filterTableData(ConfigModel::FIELDS,$input);
+        ConfigModel::query()->where('id',$input['id'])->update($data);
+    }
+
+
+    public function store($input)
+    {
+        $user = auth()->guard('jwt')->user();
+        $findcheck = ConfigModel::query()
+            ->where('group_name',$input['group_name'])
+            ->where('name',$input['name'])
+            ->where('company_id',$user->company_id)
+            ->exists();
+        if($findcheck){
+            throw new AdminResponseException(ErrorCode::ERROR,"该组名该配置名称已存在");
+        }
+        $data = DatabaseLogic::filterTableData(ConfigModel::FIELDS,$input);
+        unset($data['id']);
+        ConfigModel::query()->insert($data);
     }
 
     public function getOne($input)

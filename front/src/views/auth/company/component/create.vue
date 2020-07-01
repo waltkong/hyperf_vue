@@ -3,7 +3,7 @@
   <el-dialog
     :title="title"
     center
-    width="100%"
+    width="70%"
     :visible.sync="dialogVisible"
     :fullscreen="fullscreen"
   >
@@ -106,7 +106,7 @@ export default {
   methods: {
     // 执行创建
     handleCreate() {
-      this.$refs['createForm'].validate(valid => {
+      this.$refs['dataForm'].validate(valid => {
         if (valid) {
           storeOrUpdate(this.defaultForm).then(response => {
             if (isApiSuccess(response.code)) {

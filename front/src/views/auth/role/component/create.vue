@@ -137,7 +137,7 @@
         const checkedKeys = this.$refs.tree.getCheckedKeys()
         console.log(checkedKeys)
         this.defaultForm.menus = checkedKeys
-        this.$refs['createForm'].validate(valid => {
+        this.$refs['dataForm'].validate(valid => {
           if (valid) {
             storeOrUpdate(this.defaultForm).then(response => {
               if (isApiSuccess(response.code)) {

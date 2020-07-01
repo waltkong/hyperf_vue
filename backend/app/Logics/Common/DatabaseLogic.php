@@ -29,66 +29,11 @@ class DatabaseLogic{
 
 
     /**
-     * 通用的插入
-     * @param $modelClass
-     * @param array $data
-     * @return mixed
+     *  是否操作的数据是该用户所在的公司
+     * @param $row
+     * @param string $field
      */
-    public static function commonInsertData($modelClass, array $data){
-
-        $fields = $modelClass::FIELDS;
-
-        $data = self::filterTableData($fields, $data);
-
-        //只有不存在company_id的时候才会覆盖
-        if(!isset($data['company_id']) && empty($data['company_id'])){
-            if(auth()->guard('jwt')->check()){
-
-                $user = auth()->guard('jwt')->user();
-
-                //多拼接一个所属公司id
-                if(in_array('company_id',$fields) && !isset($data['company_id'])){
-                    $data['company_id'] = $user->company_id  ;
-                }
-            }
-        }
-
-        return $modelClass::query()->insertGetId($data);
-
-    }
-
-
-    /**
-     *  通用的编辑
-     * @param $modelClass
-     * @param $qs
-     * @param array $data
-     * @return mixed
-     */
-    public static function commonUpdateData($modelClass, $qs, array $data){
-
-        $fields = $modelClass::FIELDS;
-
-        $data = self::filterTableData($fields, $data);
-
-        if(!isset($data['company_id']) && empty($data['company_id'])){
-            if(auth()->guard('jwt')->check()){
-
-                $user = auth()->guard('jwt')->user();
-
-                //多拼接一个所属公司id
-                if(in_array('company_id',$fields) && !isset($data['company_id'])){
-                    $data['company_id'] = $user->company_id  ;
-                }
-            }
-        }
-
-        return $qs->update($data);
-
-    }
-
-
-    public static function commonCheckThisCompany($row,$field='company_id'){
+    public static function commonCheckThisCompany($row, $field='company_id'){
         $user = auth()->guard('jwt')->user();
 
         if(!is_null($row)){

@@ -43,6 +43,52 @@ class MenuLogic{
         return PageLogic::commonListDataReturn($ret);
     }
 
+    public function update($input)
+    {
+        $user = auth()->guard('jwt')->user();
+
+        $findcheck = MenuModel::query()
+            ->where('name',$input['name'])
+            ->where('id','<>',$input['id'])
+            ->exists();
+        if($findcheck){
+            throw new AdminResponseException(ErrorCode::ERROR,"该菜单名称已存在");
+        }
+        $findcheck = MenuModel::query()
+            ->where('id','<>',$input['id'])
+            ->where('url',$input['url'])
+            ->exists();
+        if($findcheck){
+            throw new AdminResponseException(ErrorCode::ERROR,"该url已存在");
+        }
+
+        $data = DatabaseLogic::filterTableData(MenuModel::FIELDS,$input);
+        MenuModel::query()->where('id',$input['id'])->update($data);
+    }
+
+
+    public function store($input)
+    {
+        $user = auth()->guard('jwt')->user();
+
+        $findcheck = MenuModel::query()
+            ->where('name',$input['name'])
+            ->exists();
+        if($findcheck){
+            throw new AdminResponseException(ErrorCode::ERROR,"该菜单名称已存在");
+        }
+        $findcheck = MenuModel::query()
+            ->where('url',$input['url'])
+            ->exists();
+        if($findcheck){
+            throw new AdminResponseException(ErrorCode::ERROR,"该url已存在");
+        }
+
+        $data = DatabaseLogic::filterTableData(MenuModel::FIELDS,$input);
+        unset($data['id']);
+        MenuModel::query()->insert($data);
+    }
+
     public function storeOrUpdate(array $input)
     {
         $id = $input['id'] ?? '';
@@ -57,40 +103,9 @@ class MenuLogic{
             }
 
             if(empty($id)){
-                $findcheck = MenuModel::query()
-                    ->where('name',$input['name'])
-                    ->exists();
-                if($findcheck){
-                    throw new AdminResponseException(ErrorCode::ERROR,"该菜单名称已存在");
-                }
-                $findcheck = MenuModel::query()
-                    ->where('url',$input['url'])
-                    ->exists();
-                if($findcheck){
-                    throw new AdminResponseException(ErrorCode::ERROR,"该url已存在");
-                }
-
-                DatabaseLogic::commonInsertData(MenuModel::class,$input);
-
+                $this->store($input);
             }else{
-                $findcheck = MenuModel::query()
-                    ->where('name',$input['name'])
-                    ->where('id','<>',$id)
-                    ->exists();
-                if($findcheck){
-                    throw new AdminResponseException(ErrorCode::ERROR,"该菜单名称已存在");
-                }
-                $findcheck = MenuModel::query()
-                    ->where('id','<>',$id)
-                    ->where('url',$input['url'])
-                    ->exists();
-                if($findcheck){
-                    throw new AdminResponseException(ErrorCode::ERROR,"该url已存在");
-                }
-
-                $qs = MenuModel::query()->where('id',$id);
-                DatabaseLogic::commonUpdateData(MenuModel::class,$qs,$input);
-
+                $this->update($input);
             }
         }catch (\Exception $e){
             throw new AdminResponseException(ErrorCode::SYSTEM_INNER_ERROR,$e->getMessage());

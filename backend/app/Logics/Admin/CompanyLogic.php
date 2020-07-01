@@ -43,26 +43,38 @@ class CompanyLogic{
         $id = $input['id'] ?? '';
         try{
             if(empty($id)){
-                $findcheck = CompanyModel::query()->where('name',$input['name'])->exists();
-                if($findcheck){
-                    throw new AdminResponseException(ErrorCode::ERROR,"公司名已存在");
-                }
-                DatabaseLogic::commonInsertData(CompanyModel::class,$input);
-
+                $this->store($input);
             }else{
-                $findcheck = CompanyModel::query()->where('name',$input['name'])->where('id','<>',$id)->exists();
-                if($findcheck){
-                    throw new AdminResponseException(ErrorCode::ERROR,"公司名已存在");
-                }
-                $qs = CompanyModel::query()->where('id',$id);
-
-                DatabaseLogic::commonUpdateData(CompanyModel::class,$qs,$input);
-
+                $this->update($input);
             }
         }catch (\Exception $e){
             throw new AdminResponseException(ErrorCode::SYSTEM_INNER_ERROR,$e->getMessage());
         }
+    }
 
+
+    public function update($input)
+    {
+        $user = auth()->guard('jwt')->user();
+        $findcheck = CompanyModel::query()->where('name',$input['name'])->where('id','<>',$input['id'])->exists();
+        if($findcheck){
+            throw new AdminResponseException(ErrorCode::ERROR,"公司名已存在");
+        }
+        $data = DatabaseLogic::filterTableData(CompanyModel::FIELDS,$input);
+        CompanyModel::query()->where('id',$input['id'])->update($data);
+    }
+
+
+    public function store($input)
+    {
+        $user = auth()->guard('jwt')->user();
+        $findcheck = CompanyModel::query()->where('name',$input['name'])->exists();
+        if($findcheck){
+            throw new AdminResponseException(ErrorCode::ERROR,"公司名已存在");
+        }
+        $data = DatabaseLogic::filterTableData(CompanyModel::FIELDS,$input);
+        unset($data['id']);
+        CompanyModel::query()->insert($data);
     }
 
     public function getOne($input)
@@ -72,9 +84,6 @@ class CompanyLogic{
         if(!is_null($row)){
             DatabaseLogic::commonCheckThisCompany($row,'id');
         }
-
-        Log::log(\GuzzleHttp\json_encode($input));
-
         return [
             'data' => $row,
         ];
@@ -94,7 +103,8 @@ class CompanyLogic{
     }
 
 
-    public function checkCompanyIsSuper($companyId){
+    public function checkCompanyIsSuper($companyId)
+    {
        $row =  CompanyModel::query()->where('id',$companyId)->first();
        if(!is_null($row) && $row->admin_status == CompanyModel::ADMIN_STATUS['SUPER']){
            return true;

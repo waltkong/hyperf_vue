@@ -65,47 +65,56 @@ class UserLogic{
 
         try{
             if(empty($id)){
-
-                if(!isset($input['password']) || empty($input['password'])){
-                    throw new \Exception('密码必要');
-                }
-                //新增变更密码
-                $input['salt'] = $this->loginlogic->generateSalt();
-                $input['password'] = $this->loginlogic->encryptPassword($input['password'],$input['salt']);
-
-                $findcheck = UserModel::query()
-                    ->where('mobile',$input['mobile'])
-                    ->where('company_id',$input['company_id'])
-                    ->exists();
-                if($findcheck){
-                    throw new AdminResponseException(ErrorCode::ERROR,"该手机已存在");
-                }
-
-                DatabaseLogic::commonInsertData(UserModel::class,$input);
-
+                $this->store($input);
             }else{
-                $findcheck = UserModel::query()
-                    ->where('mobile',$input['mobile'])
-                    ->where('id','<>',$id)
-                    ->where('company_id',$input['company_id'])
-                    ->exists();
-                if($findcheck){
-                    throw new AdminResponseException(ErrorCode::ERROR,"该手机已存在");
-                }
-
-                //更新密码不变
-                unset($input['password']);
-                unset($input['salt']);
-
-                $qs = UserModel::query()->where('id',$id);
-
-                DatabaseLogic::commonUpdateData(UserModel::class,$qs,$input);
-
+                $this->update($input);
             }
         }catch (\Exception $e){
             throw new AdminResponseException(ErrorCode::SYSTEM_INNER_ERROR,$e->getMessage());
         }
 
+    }
+
+
+    public function update($input)
+    {
+        $user = auth()->guard('jwt')->user();
+        $findcheck = UserModel::query()
+            ->where('mobile',$input['mobile'])
+            ->where('id','<>',$input['id'])
+            ->where('company_id',$input['company_id'])
+            ->exists();
+        if($findcheck){
+            throw new AdminResponseException(ErrorCode::ERROR,"该手机已存在");
+        }
+        //更新密码不变
+        unset($input['password']);
+        unset($input['salt']);
+        $data = DatabaseLogic::filterTableData(UserModel::FIELDS,$input);
+        UserModel::query()->where('id',$input['id'])->update($data);
+    }
+
+
+    public function store($input)
+    {
+        $user = auth()->guard('jwt')->user();
+        if(!isset($input['password']) || empty($input['password'])){
+            throw new \Exception('密码必要');
+        }
+        //新增变更密码
+        $input['salt'] = $this->loginlogic->generateSalt();
+        $input['password'] = $this->loginlogic->encryptPassword($input['password'],$input['salt']);
+
+        $findcheck = UserModel::query()
+            ->where('mobile',$input['mobile'])
+            ->where('company_id',$input['company_id'])
+            ->exists();
+        if($findcheck){
+            throw new AdminResponseException(ErrorCode::ERROR,"该手机已存在");
+        }
+        $data = DatabaseLogic::filterTableData(UserModel::FIELDS,$input);
+        unset($data['id']);
+        UserModel::query()->insert($data);
     }
 
     public function getOne($input)

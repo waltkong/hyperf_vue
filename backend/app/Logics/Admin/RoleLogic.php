@@ -44,38 +44,47 @@ class RoleLogic{
     public function storeOrUpdate($input)
     {
         $id = $input['id'] ?? '';
-
         try{
-            $user = auth()->guard('jwt')->user();
-
             if(empty($id)){
-                $findcheck = RoleModel::query()
-                    ->where('name',$input['name'])
-                    ->where('company_id',$user->company_id)
-                    ->exists();
-                if($findcheck){
-                    throw new AdminResponseException(ErrorCode::ERROR,"该名称已存在");
-                }
-
-                DatabaseLogic::commonInsertData(RoleModel::class,$input);
-
+                $this->store($input);
             }else{
-                $findcheck = RoleModel::query()
-                    ->where('name',$input['name'])
-                    ->where('id','<>',$id)
-                    ->where('company_id',$user->company_id)
-                    ->exists();
-                if($findcheck){
-                    throw new AdminResponseException(ErrorCode::ERROR,"该名称已存在");
-                }
-                $qs = RoleModel::query()->where('id',$id);
-
-                DatabaseLogic::commonUpdateData(RoleModel::class,$qs,$input);
-
+                $this->update($input);
             }
         }catch (\Exception $e){
             throw new AdminResponseException(ErrorCode::SYSTEM_INNER_ERROR,$e->getMessage());
         }
+    }
+
+
+    public function update($input)
+    {
+        $user = auth()->guard('jwt')->user();
+        $findcheck = RoleModel::query()
+            ->where('name',$input['name'])
+            ->where('id','<>',$input['id'])
+            ->where('company_id',$user->company_id)
+            ->exists();
+        if($findcheck){
+            throw new AdminResponseException(ErrorCode::ERROR,"该名称已存在");
+        }
+        $data = DatabaseLogic::filterTableData(RoleModel::FIELDS,$input);
+        RoleModel::query()->where('id',$input['id'])->update($data);
+    }
+
+
+    public function store($input)
+    {
+        $user = auth()->guard('jwt')->user();
+        $findcheck = RoleModel::query()
+            ->where('name',$input['name'])
+            ->where('company_id',$user->company_id)
+            ->exists();
+        if($findcheck){
+            throw new AdminResponseException(ErrorCode::ERROR,"该名称已存在");
+        }
+        $data = DatabaseLogic::filterTableData(RoleModel::FIELDS,$input);
+        unset($data['id']);
+        RoleModel::query()->insert($data);
     }
 
     public function getOne($input)
