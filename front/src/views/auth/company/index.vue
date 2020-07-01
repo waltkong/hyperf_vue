@@ -14,7 +14,7 @@
         搜索
       </el-button>
 
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" style="margin-left: 30px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
 

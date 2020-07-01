@@ -36,6 +36,9 @@ class RoleModel extends Model {
         'name',
         'remark',
         'company_id',
+        'created_at',
+        'deleted_at',
+        'updated_at',
     ];
 
 

@@ -37,6 +37,9 @@ class CompanyModel extends Model {
         'phone',
         'contact_user',
         'admin_status',
+        'created_at',
+        'deleted_at',
+        'updated_at',
     ];
 
 

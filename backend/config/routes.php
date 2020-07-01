@@ -21,10 +21,6 @@ Router::addGroup('/admin/login',function (){
     Router::post('/logout', 'App\Controller\Admin\LoginController@logout');
 });
 
-Router::addGroup('/admin/test1',function (){
-    Router::post('/test1', 'App\Controller\Admin\CompanyController@test1');
-});
-
 //后台需要token访问的
 Router::addGroup('/admin',function (){
 
@@ -41,10 +37,12 @@ Router::addGroup('/admin',function (){
     Router::post('/role/storeOrUpdate', 'App\Controller\Admin\RoleController@storeOrUpdate');
     Router::post('/role/getOne', 'App\Controller\Admin\RoleController@getOne');
     Router::post('/role/deleteOne', 'App\Controller\Admin\RoleController@deleteOne');
+    Router::post('/role/getAllMenus', 'App\Controller\Admin\RoleController@getAllMenus');
+    Router::post('/role/getThisRoleMenus', 'App\Controller\Admin\RoleController@getThisRoleMenus');
 
     Router::post('/company/dataList', 'App\Controller\Admin\CompanyController@dataList');
     Router::post('/company/storeOrUpdate', 'App\Controller\Admin\CompanyController@storeOrUpdate');
-    Router::post('/company/getOne', 'App\Controller\Admin\CompanyController@getOne');
+    Router::post('/company/getOne', 'App\Controller\Admin\CompanyController@getOne3');
     Router::post('/company/deleteOne', 'App\Controller\Admin\CompanyController@deleteOne');
 
 

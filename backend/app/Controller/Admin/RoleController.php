@@ -11,6 +11,7 @@ use App\Middleware\OperateLogMiddleware;
 use App\Constants\ErrorCode;
 use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\Middleware;
+use App\Exception\AdminResponseException;
 
 class RoleController extends BaseController
 {
@@ -45,14 +46,14 @@ class RoleController extends BaseController
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'name' => 'required|between:1,255',
-            ],
-            [
-                'name.required' => '名称必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'name' => 'required|between:1,255',
+        ],[
+            'name.required' => '名称必要',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $this->logic->storeOrUpdate($input);
 
@@ -68,14 +69,14 @@ class RoleController extends BaseController
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'id' => 'required|numeric',
-            ],
-            [
-                'id.required' => 'id必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+        ],[
+            'id.required' => '缺少id',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $result = $this->logic->getOne($input);
 
@@ -93,16 +94,49 @@ class RoleController extends BaseController
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'id' => 'required|numeric',
-            ],
-            [
-                'id.required' => 'id必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+        ],[
+            'id.required' => '缺少id',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         return $this->response->json(ResponseLogic::successData([]));
+    }
+
+    /**
+     * 添加角色时所有菜单
+     * @Auth("jwt")
+     */
+    public function getAllMenus(){
+        $input = $this->request->all();
+
+        $result = $this->logic->getAllMenus();
+
+        return $this->response->json(ResponseLogic::successData($result));
+    }
+
+    /**
+     * 获取指定角色的所有授权菜单
+     * @Auth("jwt")
+     */
+    public function getThisRoleMenus(){
+        $input = $this->request->all();
+
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+        ],[
+            'id.required' => '缺少id',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
+
+        $result = $this->logic->getThisRoleMenus($input);
+
+        return $this->response->json(ResponseLogic::successData($result));
     }
 
 

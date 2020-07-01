@@ -40,9 +40,13 @@ class MenuModel extends Model {
         'NO' => 0,
     ];
 
+    const IS_ONLY_SUPER_COMPANY = [
+        'YES' => 1,
+        'NO' => 0,
+    ];
+
     const FIELDS = [
         'id',
-        'company_id',
         'parent_id',
         'level',
         'name',
@@ -50,6 +54,9 @@ class MenuModel extends Model {
         'need_auth',
         'is_menu',
         'is_only_super_admin',
+        'created_at',
+        'deleted_at',
+        'updated_at',
     ];
 
 }

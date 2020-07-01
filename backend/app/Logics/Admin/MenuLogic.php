@@ -28,7 +28,6 @@ class MenuLogic{
                 $obj = $obj->where('is_menu','=',"{$input['is_menu']}");
             }
             $obj = PageLogic::startAndEndTimeQuerySetFilter($obj,$input);
-            $obj = PageLogic::superCompanyQuerySetFilter($obj,$input);
             return $obj;
         };
 
@@ -48,7 +47,6 @@ class MenuLogic{
     {
         $id = $input['id'] ?? '';
         $parent_id = $input['parent_id'] ?? '';
-        $user = auth()->guard('jwt')->user();
         try{
 
             if(empty($parent_id)){
@@ -61,14 +59,12 @@ class MenuLogic{
             if(empty($id)){
                 $findcheck = MenuModel::query()
                     ->where('name',$input['name'])
-                    ->where('company_id',$user->company_id)
                     ->exists();
                 if($findcheck){
                     throw new AdminResponseException(ErrorCode::ERROR,"该菜单名称已存在");
                 }
                 $findcheck = MenuModel::query()
                     ->where('url',$input['url'])
-                    ->where('company_id',$user->company_id)
                     ->exists();
                 if($findcheck){
                     throw new AdminResponseException(ErrorCode::ERROR,"该url已存在");
@@ -80,7 +76,6 @@ class MenuLogic{
                 $findcheck = MenuModel::query()
                     ->where('name',$input['name'])
                     ->where('id','<>',$id)
-                    ->where('company_id',$user->company_id)
                     ->exists();
                 if($findcheck){
                     throw new AdminResponseException(ErrorCode::ERROR,"该菜单名称已存在");
@@ -88,7 +83,6 @@ class MenuLogic{
                 $findcheck = MenuModel::query()
                     ->where('id','<>',$id)
                     ->where('url',$input['url'])
-                    ->where('company_id',$user->company_id)
                     ->exists();
                 if($findcheck){
                     throw new AdminResponseException(ErrorCode::ERROR,"该url已存在");
@@ -107,7 +101,6 @@ class MenuLogic{
     {
 
         $row = MenuModel::query()->where('id',$input['id'])->first();
-        DatabaseLogic::commonCheckThisCompany($row);
         return [
             'data' => $row,
         ];

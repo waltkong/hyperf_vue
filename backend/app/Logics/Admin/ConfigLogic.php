@@ -10,8 +10,10 @@ use App\Model\User\CompanyModel;
 
 class ConfigLogic{
 
+
     public function __construct()
     {
+
     }
 
     public function dataList($input)
@@ -25,7 +27,7 @@ class ConfigLogic{
                 $obj = $obj->where('name','like',"%{$input['name']}%");
             }
             $obj = PageLogic::startAndEndTimeQuerySetFilter($obj,$input);
-            $obj = PageLogic::superCompanyQuerySetFilter($obj,$input);
+            $obj = PageLogic::attachCompanyQuerySetFilter($obj,$input);
             return $obj;
         };
 

@@ -33,4 +33,14 @@ class CorsMiddleware implements MiddlewareInterface
 
         return $handler->handle($request);
     }
+
+
+
+//中间件：
+//$request = $request->withAttribute('user', $user);
+//Context::set(ServerRequestInterface::class, $request);
+//
+//控制器中：
+//$user = $this->request->getAttribute('user');
+
 }

@@ -12,6 +12,7 @@ use Qbhy\HyperfAuth\Annotation\Auth;
 use App\Middleware\OperateLogMiddleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\Middleware;
+use App\Exception\AdminResponseException;
 
 class MenuController extends BaseController{
 
@@ -44,20 +45,21 @@ class MenuController extends BaseController{
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'name' => 'required|between:1,255',
-                'url' => 'required|between:1,255',
-                'is_menu' => 'required',
-                'need_auth' => 'required',
-                'is_only_super_admin' => 'required',
-                'parent_id' => 'required',
-            ],
-            [
-                'name.required' => '名称必要',
-                'url.required' => 'url必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'name' => 'required|between:1,255',
+            'url' => 'required|between:1,255',
+            'is_menu' => 'required',
+            'need_auth' => 'required',
+            'is_only_super_admin' => 'required',
+            'is_only_super_company' => 'required',
+            'parent_id' => 'required',
+        ],[
+            'name.required' => '名称必要',
+            'url.required' => 'url必要',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $this->logic->storeOrUpdate($input);
 
@@ -73,14 +75,14 @@ class MenuController extends BaseController{
         $input = $this->request->all();
 
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'id' => 'required|numeric',
-            ],
-            [
-                'id.required' => 'id必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+        ],[
+            'id.required' => '缺少id',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $result =  $this->logic->getOne($input);
 
@@ -98,14 +100,14 @@ class MenuController extends BaseController{
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'id' => 'required|numeric',
-            ],
-            [
-                'id.required' => 'id必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+        ],[
+            'id.required' => '缺少id',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
         $this->logic->deleteOne($input);
 
         return $this->response->json(ResponseLogic::successData([]));

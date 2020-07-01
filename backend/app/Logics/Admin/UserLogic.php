@@ -36,7 +36,7 @@ class UserLogic{
                 $obj = $obj->where('company_id','=',"{$input['company_id']}");
             }
             $obj = PageLogic::startAndEndTimeQuerySetFilter($obj,$input);
-            $obj = PageLogic::superCompanyQuerySetFilter($obj,$input);
+            $obj = PageLogic::attachCompanyQuerySetFilter($obj,$input);
             return $obj;
         };
 

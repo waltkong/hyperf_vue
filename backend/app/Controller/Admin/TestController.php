@@ -15,7 +15,7 @@ use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use App\Services\Queue\ExampleQueue;
-
+use App\Exception\AdminResponseException;
 
 /**
  * @AutoController

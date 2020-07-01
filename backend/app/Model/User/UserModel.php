@@ -51,6 +51,9 @@ class UserModel extends Model  implements Authenticatable{
         'company_id',
         'login_status',
         'admin_status',
+        'created_at',
+        'deleted_at',
+        'updated_at',
     ];
 
     /**
@@ -60,14 +63,12 @@ class UserModel extends Model  implements Authenticatable{
     public static function getOperatableUrlsByUser($user_id){
         $user = UserModel::query()->where('id',$user_id)->first();
         if($user->admin_status == UserModel::ADMIN_STATUS['SUPER']){
-//            $urls = MenuModel::query()->where('company_id',$user->company_id)->pluck('url');
             return "*";
         }else{
             $roles = $user->its_roles->toArray();
             $role_ids = array_column($roles,'id');
             $menu_ids = Role2MenuModel::query()->whereIn('role_id',$role_ids)->pluck('menu_id');
             $urls = MenuModel::query()
-                ->where('company_id',$user->company_id)
                 ->whereIn('id',$menu_ids)
                 ->pluck('url');
             return $urls;

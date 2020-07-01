@@ -93,4 +93,13 @@ class CompanyLogic{
 
     }
 
+
+    public function checkCompanyIsSuper($companyId){
+       $row =  CompanyModel::query()->where('id',$companyId)->first();
+       if(!is_null($row) && $row->admin_status == CompanyModel::ADMIN_STATUS['SUPER']){
+           return true;
+       }
+       return false;
+    }
+
 }

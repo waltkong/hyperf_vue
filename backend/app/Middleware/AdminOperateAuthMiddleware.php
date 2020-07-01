@@ -6,6 +6,9 @@ namespace App\Middleware;
 
 use App\Constants\ErrorCode;
 use App\Model\System\MenuModel;
+use App\Model\User\CompanyModel;
+use App\Model\User\Role2UserModel;
+use App\Model\User\RoleModel;
 use App\Model\User\UserModel;
 use function FastRoute\TestFixtures\empty_options_cached;
 use Hyperf\DbConnection\Db;
@@ -39,6 +42,8 @@ class AdminOperateAuthMiddleware implements MiddlewareInterface
      */
     protected $response;
 
+    private $debug = [];
+
     public function __construct(ContainerInterface $container, HttpResponse $response, RequestInterface $request)
     {
         $this->container = $container;
@@ -51,7 +56,7 @@ class AdminOperateAuthMiddleware implements MiddlewareInterface
         try{
             $userRow = auth()->guard('jwt')->user();
 
-            $url = $this->request->url();
+            $url = $this->request->getRequestUri();
 
             $checkres = $this->checkOperateAuth($userRow,$url);
 
@@ -64,7 +69,8 @@ class AdminOperateAuthMiddleware implements MiddlewareInterface
                 [
                     'code' => ErrorCode::PERMISSION_NO_ACCESS,
                     'msg' => $e->getMessage(),
-                    'data' => []
+                    'data' => [],
+                    'debug' => $this->debug
                 ]
             );
         }
@@ -77,7 +83,6 @@ class AdminOperateAuthMiddleware implements MiddlewareInterface
 
         $menuRow = MenuModel::query()
             ->where('url',$url)
-            ->where('company_id',$userRow->company_id)
             ->first();
 
         if(is_null($menuRow)){
@@ -88,19 +93,34 @@ class AdminOperateAuthMiddleware implements MiddlewareInterface
             return true;
         }
 
-        //本公司的链接 超管用户 有权限
-        if($userRow->admin_status == UserModel::ADMIN_STATUS['SUPER'] && $menuRow->company_id == $userRow->company_id){
+        $its_company = CompanyModel::query()->where('id',$userRow->company_id)->first();
+        if(is_null($its_company)){
+            $this->debug = [
+                'msg' => 'no company belong',
+            ];
+            return false;
+        }
+
+        if($menuRow->is_only_super_company == MenuModel::IS_ONLY_SUPER_COMPANY['YES'] && $its_company->admin_status != CompanyModel::ADMIN_STATUS['SUPER']){
+            $this->debug = 'only super company has permission';
+            return false;
+        }
+
+        if($menuRow->is_only_super_company == MenuModel::IS_ONLY_SUPER_COMPANY['NO'] && $userRow->admin_status == UserModel::ADMIN_STATUS['SUPER']){
             return true;
         }
 
         //必须为超管，但是用户不是超管，则没有权限。
         if($menuRow->is_only_super_admin==MenuModel::IS_ONLY_SUPER_ADMIN['YES'] &&  $userRow->admin_status != UserModel::ADMIN_STATUS['SUPER']){
+            $this->debug = 'only super admin has permission';
             return false;
         }
 
 
         $roleRowsByMenu = $menuRow->its_roles;
-        $roleRowsByUser = $userRow->its_roles;
+
+        $roleIds = Role2UserModel::query()->where('user_id',$userRow->id)->pluck('role_id');
+        $roleRowsByUser = RoleModel::query()->whereIn('id',$roleIds)->get();
 
         foreach ($roleRowsByMenu as $k1 => $v1){
             foreach ($roleRowsByUser as $k2 => $v2){

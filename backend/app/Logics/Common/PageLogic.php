@@ -3,6 +3,7 @@ namespace App\Logics\Common;
 
 use App\Constants\AdminCommonConstant;
 use App\Model\User\CompanyModel;
+use PDepend\Util\Log;
 
 class PageLogic{
 
@@ -70,16 +71,14 @@ class PageLogic{
      * @param $data
      * @return mixed
      */
-    public static function superCompanyQuerySetFilter($qs, $data){
+    public static function attachCompanyQuerySetFilter($qs, $data){
         $user = auth()->guard('jwt')->user();
         $company = $user->its_company;
 
-        if($company->admin_status != CompanyModel::ADMIN_STATUS['SUPER']){
-            $qs = $qs->where('company_id',$company->id);
-            return $qs;
-        }
-        if(isset($data['company_id']) && $data['company_id']>0){
-            $qs = $qs->where('company_id',$data['company_id']);
+        Log::debug(\GuzzleHttp\json_encode($company));
+
+        if(!isset($data['company_id']) ||  empty($data['company_id'])){
+            $qs = $qs->where('company_id',$user->company_id);
             return $qs;
         }
         return $qs;

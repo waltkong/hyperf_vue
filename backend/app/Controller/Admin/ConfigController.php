@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 
 use App\Controller\BaseController;
 
+use App\Exception\AdminResponseException;
 use App\Logics\Admin\ConfigLogic;
 use App\Logics\Common\ResponseLogic;
 use Qbhy\HyperfAuth\Annotation\Auth;
@@ -46,17 +47,14 @@ class ConfigController extends BaseController
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'name' => 'required|between:1,255',
-                'group_name' => 'required|between:1,255',
-                'type' => 'required',
-            ],
-            [
-                'name.required' => '名称必要',
-                'group_name.required' => '组别必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'name' => 'required|between:1,255',
+        ],[
+            'name.required' => '名称必要',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $this->logic->storeOrUpdate($input);
 
@@ -72,14 +70,14 @@ class ConfigController extends BaseController
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'id' => 'required|numeric',
-            ],
-            [
-                'id.required' => 'id必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+        ],[
+            'id.required' => '缺少id',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $result = $this->logic->getOne($input);
 
@@ -97,14 +95,14 @@ class ConfigController extends BaseController
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'id' => 'required|numeric',
-            ],
-            [
-                'id.required' => 'id必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+        ],[
+            'id.required' => '缺少id',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $this->logic->deleteOne($input);
 

@@ -12,8 +12,6 @@ class BaseController extends AbstractController
 
     protected $logic;
 
-    protected $validateLogic;
-
     /**
      * @Inject()
      * @var ValidatorFactoryInterface
@@ -22,11 +20,8 @@ class BaseController extends AbstractController
 
     public function __construct()
     {
-        $this->_init();
+
     }
 
-    protected function _init(){
-        $this->validateLogic = (new ValidateLogic())->setValidateFactory($this->validationFactory);
-    }
 
 }

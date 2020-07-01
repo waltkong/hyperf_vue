@@ -22,7 +22,7 @@ class LogLogic{
                 $obj = $obj->where('user_id','=',"{$input['user_id']}");
             }
             $obj = PageLogic::startAndEndTimeQuerySetFilter($obj,$input);
-            $obj = PageLogic::superCompanyQuerySetFilter($obj,$input);
+            $obj = PageLogic::attachCompanyQuerySetFilter($obj,$input);
             return $obj;
         };
 

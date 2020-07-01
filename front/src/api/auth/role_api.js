@@ -32,3 +32,18 @@ export function deleteOne(data) {
   })
 }
 
+export function getAllMenus(data) {
+  return request({
+    url: '/admin/role/getAllMenus',
+    method: 'post',
+    data
+  })
+}
+
+export function getThisRoleMenus(data) {
+  return request({
+    url: '/admin/role/getThisRoleMenus',
+    method: 'post',
+    data
+  })
+}

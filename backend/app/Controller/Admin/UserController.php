@@ -12,7 +12,7 @@ use App\Middleware\OperateLogMiddleware;
 use App\Constants\ErrorCode;
 use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\Middleware;
-
+use App\Exception\AdminResponseException;
 
 class UserController extends BaseController
 {
@@ -47,22 +47,22 @@ class UserController extends BaseController
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'company_id' => 'required|numeric',
-                'nickname' => 'required|between:1,255',
-                'mobile' => 'required|between:1,255',
-                'avatar' => 'required|between:1,255',
-                'admin_status' => 'required|numeric',
-            ],
-            [
-                'company_id.required' => '公司必要',
-                'nickname.required' => '昵称必要',
-                'mobile.required' => '手机必要',
-                'avatar.required' => '头像必要',
-                'admin_status.required' => '管理员状态必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'company_id' => 'required|numeric',
+            'nickname' => 'required|between:1,255',
+            'mobile' => 'required|between:1,255',
+            'avatar' => 'required|between:1,255',
+            'admin_status' => 'required|numeric',
+        ],[
+            'company_id.required' => '公司必要',
+            'nickname.required' => '昵称必要',
+            'mobile.required' => '手机必要',
+            'avatar.required' => '头像必要',
+            'admin_status.required' => '管理员状态必要',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $this->logic->storeOrUpdate($input);
 
@@ -79,18 +79,18 @@ class UserController extends BaseController
     public function changePassword(){
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'id' => 'required|numeric',
-                'old_password' => 'required|between:1,255',
-                'new_password' => 'required|between:1,255',
-            ],
-            [
-                'id.required' => 'id必要',
-                'old_password.required' => '旧密码必要',
-                'new_password.required' => '新密码必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+            'old_password' => 'required|between:1,255',
+            'new_password' => 'required|between:1,255',
+        ],[
+            'id.required' => 'id必要',
+            'old_password.required' => '旧密码必要',
+            'new_password.required' => '新密码必要',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $this->logic->changePassword($input);
 
@@ -108,17 +108,16 @@ class UserController extends BaseController
     public function changeRole(){
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'id' => 'required|numeric',
-                'role_ids' => 'required',
-
-            ],
-            [
-                'id.required' => 'id必要',
-                'role_ids.required' => '角色必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+            'role_ids' => 'required',
+        ],[
+            'id.required' => 'id必要',
+            'role_ids.required' => '角色必要',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $this->logic->changeRole($input);
 
@@ -134,14 +133,14 @@ class UserController extends BaseController
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'id' => 'required|numeric',
-            ],
-            [
-                'id.required' => 'id必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+        ],[
+            'id.required' => '缺少id',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $result = $this->logic->getOne($input);
 
@@ -159,14 +158,14 @@ class UserController extends BaseController
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'id' => 'required|numeric',
-            ],
-            [
-                'id.required' => 'id必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+        ],[
+            'id.required' => '缺少id',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $this->logic->deleteOne($input);
 

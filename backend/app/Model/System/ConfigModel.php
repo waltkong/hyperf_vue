@@ -26,6 +26,9 @@ class ConfigModel extends Model {
         'value',
         'is_global',
         'company_id',
+        'created_at',
+        'deleted_at',
+        'updated_at',
     ];
 
     const IS_GLOBAL = [

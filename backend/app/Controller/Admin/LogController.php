@@ -11,7 +11,7 @@ use App\Middleware\OperateLogMiddleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\Middleware;
 use App\Constants\ErrorCode;
-
+use App\Exception\AdminResponseException;
 
 class LogController extends BaseController
 {
@@ -58,14 +58,14 @@ class LogController extends BaseController
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'id' => 'required|numeric',
-            ],
-            [
-                'id.required' => 'id必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+        ],[
+            'id.required' => '缺少id',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         return $this->response->json(ResponseLogic::successData([]));
     }
@@ -81,14 +81,14 @@ class LogController extends BaseController
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'id' => 'required|numeric',
-            ],
-            [
-                'id.required' => 'id必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+        ],[
+            'id.required' => '缺少id',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         return $this->response->json(ResponseLogic::successData([]));
     }

@@ -25,6 +25,9 @@ class LogModel extends Model {
         'user_id',
         'company_id',
         'ip',
+        'created_at',
+        'deleted_at',
+        'updated_at',
     ];
 
 

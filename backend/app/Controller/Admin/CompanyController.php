@@ -5,9 +5,12 @@ namespace App\Controller\Admin;
 
 use App\Constants\ErrorCode;
 use App\Controller\BaseController;
+use App\Exception\AdminResponseException;
 use App\Logics\Admin\CompanyLogic;
 use App\Logics\Common\ResponseLogic;
+
 use App\Middleware\OperateLogMiddleware;
+use PDepend\Util\Log;
 use Qbhy\HyperfAuth\Annotation\Auth;
 use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\Middleware;
@@ -19,9 +22,6 @@ class CompanyController extends BaseController
     {
         parent::__construct();
         $this->logic = $companyLogic;
-
-        $input = $this->request->all();
-        return $this->response->json($input);
     }
 
     /**
@@ -49,14 +49,14 @@ class CompanyController extends BaseController
 
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'name' => 'required|between:1,255',
-            ],
-            [
-                'name.required' => '名称必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'name' => 'required|between:1,255',
+        ],[
+            'name.required' => '名称必要',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $this->logic->storeOrUpdate($input);
 
@@ -64,40 +64,28 @@ class CompanyController extends BaseController
     }
 
 
-    public function test1()
-    {
-        $input = $this->request->all();
-        return $this->response->json($input);
-    }
-
 
     /**
      * 查一个
      * @Auth("jwt")
-     * @Middlewares({
-     *     @Middleware(OperateLogMiddleware::class)
-     * })
      */
-    public function getOne()
+    public function getOne3()
     {
         $input = $this->request->all();
 
-//        return $this->response->raw(\GuzzleHttp\json_encode($input)) ;
-//
-//        $this->validateLogic->commonAdminValidate($input,
-//            [
-//                'id' => 'required|numeric',
-//            ],
-//            [
-//                'id.required' => 'id必要',
-//            ]
-//        );
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+        ],[
+            'id.required' => '缺少id',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $result = $this->logic->getOne($input);
 
-//        return $this->response->json(ResponseLogic::successData($result));
+        return $this->response->json(ResponseLogic::successData($result));
 
-        return $this->response->json($input);
     }
 
     /**
@@ -111,14 +99,14 @@ class CompanyController extends BaseController
     {
         $input = $this->request->all();
 
-        $this->validateLogic->commonAdminValidate($input,
-            [
-                'id' => 'required|numeric',
-            ],
-            [
-                'id.required' => 'id必要',
-            ]
-        );
+        $validator = $this->validationFactory->make($input,[
+            'id' => 'required|numeric',
+        ],[
+            'id.required' => '缺少id',
+        ]);
+        if ($validator->fails()){
+            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
+        }
 
         $this->logic->deleteOne($input);
 

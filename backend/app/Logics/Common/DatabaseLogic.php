@@ -14,7 +14,7 @@ class DatabaseLogic{
      */
     public static function filterTableData(array $tableFields , array $data){
 
-        $fields = array_merge($tableFields, ['created_at', 'updated_at', 'deleted_at']);
+        $fields = $tableFields;
 
         $result = [];
 
@@ -80,12 +80,6 @@ class DatabaseLogic{
                 if(in_array('company_id',$fields) && !isset($data['company_id'])){
                     $data['company_id'] = $user->company_id  ;
                 }
-
-                //有user_id 也存当前用户
-                if(in_array('user_id',$fields) && !isset($data['user_id'])){
-                    $data['user_id'] = $user->company_id  ;
-                }
-
             }
         }
 
