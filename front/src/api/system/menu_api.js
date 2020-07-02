@@ -31,3 +31,13 @@ export function deleteOne(data) {
     data
   })
 }
+
+export function menuParentOptions(data) {
+  return request({
+    url: '/admin/menu/menuParentOptions',
+    method: 'post',
+    data
+  })
+}
+
+

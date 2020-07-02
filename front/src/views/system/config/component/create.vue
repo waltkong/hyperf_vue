@@ -102,7 +102,7 @@
                   type: 'success',
                   duration: 1500
                 })
-                this.createVisible = false
+                this.dialogVisible = false
                 this.$emit('getList')
               } else {
                 this.$message({

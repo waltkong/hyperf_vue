@@ -33,11 +33,14 @@ class MenuLogic{
 
         $list = PageLogic::getPaginateListQuerySet($qsFunc(),$input)->get()->toArray();
 
-        $tree = (new TreeTool())->getTree($list,0,'parent_id','id');
+        $treeTool = new TreeTool();
+        $tree = $treeTool->getTree($list,0,'parent_id','id');
+
+        $result = $treeTool->addTitleWithTreeNode($tree,'id','name');
 
         $ret = [
-            'data' => $tree,
-            'count' =>  count($list),
+            'data' => $result,
+            'count' =>  count($result),
             'total' =>  $qsFunc()->count()
         ];
         return PageLogic::commonListDataReturn($ret);
@@ -139,5 +142,28 @@ class MenuLogic{
             throw new AdminResponseException(ErrorCode::SYSTEM_INNER_ERROR,$e->getMessage());
         }
     }
+
+    public function menuParentOptions($input)
+    {
+        $list = MenuModel::query()->where('level','<=',2)->get()->toArray();
+
+        $treeTool = new TreeTool();
+        $tree = $treeTool->getTree($list,0,'parent_id','id');
+
+        $options = $treeTool->convertTreeToFormOptions($tree,'id','name');
+
+        $options = array_merge([
+            'key' => 0,
+            'label' => '顶级',
+        ],$options);
+
+        return [
+            'data' => $options,
+        ];
+    }
+
+
+
+
 
 }

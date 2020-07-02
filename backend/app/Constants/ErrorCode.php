@@ -37,6 +37,7 @@ class ErrorCode extends AbstractConstants
     const PARAMS_NOT_COMPLETE = 10002; // 参数不全
     const PARAMS_TYPE_ERROR = 10003; // 参数类型错误
     const PARAMS_IS_INVALID = 10004; // 参数无效
+    const PARAMS_SIGN_ERROR = 10005;  //签名出错
 
     // 用户错误
     const USER_NOT_EXIST = 20001; // 用户不存在
@@ -79,6 +80,7 @@ class ErrorCode extends AbstractConstants
             self::PARAMS_NOT_COMPLETE => '参数不全',
             self::PARAMS_TYPE_ERROR => '参数类型错误',
             self::PARAMS_IS_INVALID => '参数无效',
+            self::PARAMS_SIGN_ERROR => '签名出错',
 
             self::USER_NOT_EXIST => '用户不存在',
             self::USER_NOT_LOGGED_IN => '用户未登陆',

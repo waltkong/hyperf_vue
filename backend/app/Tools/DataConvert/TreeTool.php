@@ -21,4 +21,58 @@ class TreeTool{
     }
 
 
+    public function addTitleWithTreeNode($tree,$keyField='id',$labelField='name'){
+        $result = [];
+        foreach ($tree as $k => $v){
+            $result[] = $v;
+            if(isset($v['children'])){
+                $children1 = $v['children'];
+                foreach ($children1 as $k1 => $v1){
+                    $v1[$labelField] = '|-- '.$v1[$labelField];
+                    $result[] = $v1;
+                    if(isset($v1['children'])){
+                        $children2 = $v1['children'];
+                        foreach ($children2 as $k2 => $v2){
+                            $v2[$labelField] = '|---- '.$v2[$labelField];
+                            $result[] = $v2;
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    //支持两层吧
+    public function convertTreeToFormOptions($tree,$keyField='id',$labelField='name'){
+        $result = [];
+        foreach ($tree as $k => $v){
+            $result[] = [
+                'key' => $v[$keyField],
+                'label' => $v[$labelField],
+            ];
+            if(isset($v['children'])){
+                $children1 = $v['children'];
+                foreach ($children1 as $k1 => $v1){
+                    $result[] = [
+                        'key' => $v1[$keyField],
+                        'label' => '|-- '.$v1[$labelField],
+                    ];
+                    if(isset($v1['children'])){
+                        $children2 = $v1['children'];
+                        foreach ($children2 as $k2 => $v2){
+                            $result[] = [
+                                'key' => $v2[$keyField],
+                                'label' => '|---- '.$v2[$labelField],
+                            ];
+                        }
+                    }
+                }
+            }
+
+        }
+        return $result;
+    }
+
+
 }

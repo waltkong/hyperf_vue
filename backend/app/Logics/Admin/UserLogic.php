@@ -44,9 +44,17 @@ class UserLogic{
 
         foreach ($collection as $k => $item){
             $company = $item->its_company;
+            $role = $item->its_role;
             unset($item->salt);
             unset($item->password);
-            $collection[$k]->company_name = $company->name;
+            if(!is_null($company)){
+                $collection[$k]->company_name = $company->name;
+            }
+
+            if(!is_null($role)){
+                $roleNames = array_column($role->toArray(),'name');
+                $collection[$k]->role_name = explode(',',$roleNames);
+            }
         }
 
         $ret = [
@@ -62,13 +70,16 @@ class UserLogic{
     {
         $id = $input['id'] ?? '';
 
+        Db::beginTransaction();
         try{
             if(empty($id)){
                 $this->store($input);
             }else{
                 $this->update($input);
             }
+            Db::commit();
         }catch (\Exception $e){
+            Db::rollBack();
             throw new AdminResponseException(ErrorCode::SYSTEM_INNER_ERROR,$e->getMessage());
         }
 
@@ -91,6 +102,8 @@ class UserLogic{
         unset($input['salt']);
         $data = DatabaseLogic::filterTableData(UserModel::FIELDS,$input);
         UserModel::query()->where('id',$input['id'])->update($data);
+
+        $this->changeRoleData($input);
     }
 
 
@@ -114,6 +127,29 @@ class UserLogic{
         $data = DatabaseLogic::filterTableData(UserModel::FIELDS,$input);
         unset($data['id']);
         UserModel::query()->insert($data);
+
+        $this->changeRoleData($input);
+    }
+
+
+    private function changeRoleData($input)
+    {
+        // 改角色
+        $roleIds = $input['roleIds'] ?? '';
+        if(!empty($roleIds)){
+            Role2UserModel::query()->where('user_id',$input['id'])->delete();
+            $insertDatas = (function() use($roleIds,$input){
+                $res = [];
+                foreach ($roleIds as $k => $v){
+                    $res[] = [
+                        'user_id' => $input['id'],
+                        'role_id' => $v
+                    ];
+                }
+                return $res;
+            })();
+            Role2UserModel::query()->insert($insertDatas);
+        }
     }
 
     public function getOne($input)

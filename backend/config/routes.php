@@ -53,11 +53,14 @@ Router::addGroup('/admin',function (){
     Router::post('/menu/storeOrUpdate', 'App\Controller\Admin\MenuController@storeOrUpdate');
     Router::post('/menu/getOne', 'App\Controller\Admin\MenuController@getOne');
     Router::post('/menu/deleteOne', 'App\Controller\Admin\MenuController@deleteOne');
+    Router::post('/menu/menuParentOptions', 'App\Controller\Admin\MenuController@menuParentOptions');
+
 
     Router::post('/config/dataList', 'App\Controller\Admin\ConfigController@dataList');
     Router::post('/config/storeOrUpdate', 'App\Controller\Admin\ConfigController@storeOrUpdate');
     Router::post('/config/getOne', 'App\Controller\Admin\ConfigController@getOne');
     Router::post('/config/deleteOne', 'App\Controller\Admin\ConfigController@deleteOne');
+
 
     Router::post('/log/dataList', 'App\Controller\Admin\LogController@dataList');
     Router::post('/log/storeOrUpdate', 'App\Controller\Admin\LogController@storeOrUpdate');

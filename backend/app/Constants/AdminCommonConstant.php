@@ -33,6 +33,10 @@ class AdminCommonConstant extends AbstractConstants
     const FORM_ORDER_BY = 'order_by';
     const FORM_ORDER_WAY = 'order_way';
 
+    const FORM_SIGN = 'form_sign_value';
+    const FORM_SIGN_FIELDS = 'form_sign_fields';
+    const FORM_SIGN_API_KEY = 'abc123456';
+
 
 
 }

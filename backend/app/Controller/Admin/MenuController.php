@@ -113,7 +113,18 @@ class MenuController extends BaseController{
         return $this->response->json(ResponseLogic::successData([]));
     }
 
+    /**
+     * 获取所有父级菜单（权限）
+     * @Auth("jwt")
+     */
+    public function menuParentOptions()
+    {
+        $input = $this->request->all();
 
+        $this->logic->menuParentOptions($input);
+
+        return $this->response->json(ResponseLogic::successData([]));
+    }
 
 
 

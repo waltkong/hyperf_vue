@@ -26,7 +26,7 @@
         </el-form-item>
 
         <el-form-item label="角色" prop="roles">
-          <el-checkbox-group v-model="defaultForm.roleIds">
+          <el-checkbox-group v-model="roleType">
             <el-checkbox  v-for="item in roleOptions" :key="item.key"  :label="item.label"  :value="item.key"  />
           </el-checkbox-group>
         </el-form-item>
@@ -82,12 +82,12 @@
           admin_status: '2',
           roleIds: ''
         },
+        roleType:[],   //无法放到defaultForm里，会有bug,所以提出来
         rules: {
           name: [{ required: true, message: '名称必填', trigger: 'blur' }]
         },
         adminStatusOptions,
         roleOptions:[],
-
       }
     },
     watch: {
@@ -96,6 +96,9 @@
       },
       createVisible(newValue, oldValue) {
         this.dialogVisible = newValue
+      },
+      roleType(newValue, oldValue) {
+        this.defaultForm.roleIds = newValue
       }
     },
     created() {
@@ -124,7 +127,7 @@
                   type: 'success',
                   duration: 1500
                 })
-                this.createVisible = false
+                this.dialogVisible = false
                 this.$emit('getList')
               } else {
                 this.$message({
@@ -151,6 +154,7 @@
               admin_status: response.data.data.admin_status.toString(),
               roleIds: response.data.data.roleIds
             }
+            this.roleType = response.data.data.roleIds
           } else {
             this.$message({
               message: response.msg || 'error',
@@ -162,6 +166,7 @@
       },
       getRoleOptions() {
         thisCompanyRoleOptions().then(response => {
+          console.log(response)
           if (isApiSuccess(response.code)) {
             this.roleOptions = response.data.data
           }else {
