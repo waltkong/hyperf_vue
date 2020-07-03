@@ -10,6 +10,7 @@ use App\Logics\Common\DatabaseLogic;
 use App\Logics\Common\PageLogic;
 use App\Model\User\UserModel;
 use App\Tools\DataConvert\TreeTool;
+use Hyperf\DbConnection\Db;
 
 class RoleLogic{
 
@@ -44,13 +45,16 @@ class RoleLogic{
     public function storeOrUpdate($input)
     {
         $id = $input['id'] ?? '';
+        Db::beginTransaction();
         try{
             if(empty($id)){
                 $this->store($input);
             }else{
                 $this->update($input);
             }
+            Db::commit();
         }catch (\Exception $e){
+            Db::rollBack();
             throw new AdminResponseException(ErrorCode::SYSTEM_INNER_ERROR,$e->getMessage());
         }
     }
@@ -69,6 +73,26 @@ class RoleLogic{
         }
         $data = DatabaseLogic::filterTableData(RoleModel::FIELDS,$input);
         RoleModel::query()->where('id',$input['id'])->update($data);
+
+        $this->saveRoleMenuData($input);
+    }
+
+
+    private function saveRoleMenuData($input)
+    {
+        $menus =  $input['menus'] ?? '';
+        Role2MenuModel::query()->where('role_id',$input['id'])->delete();
+        if(!empty($menus)){
+            $menusIds = MenuModel::query()->whereIn('url',$menus)->pluck('id');
+            $tmp = [];
+            foreach ($menusIds as  $menusId){
+                $tmp[] = [
+                    'menu_id' => $menusId,
+                    'role_id' => $input['id'],
+                ];
+            }
+            Role2MenuModel::query()->insert($tmp);
+        }
     }
 
 
@@ -85,6 +109,8 @@ class RoleLogic{
         $data = DatabaseLogic::filterTableData(RoleModel::FIELDS,$input);
         unset($data['id']);
         RoleModel::query()->insert($data);
+
+        $this->saveRoleMenuData($input);
     }
 
     public function getOne($input)

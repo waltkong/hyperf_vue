@@ -98,32 +98,6 @@ class UserController extends BaseController
 
     }
 
-    /**
-     * 修改用户角色
-     * @Auth("jwt")
-     * @Middlewares({
-     *     @Middleware(OperateLogMiddleware::class)
-     * })
-     */
-    public function changeRole(){
-        $input = $this->request->all();
-
-        $validator = $this->validationFactory->make($input,[
-            'id' => 'required|numeric',
-            'role_ids' => 'required',
-        ],[
-            'id.required' => 'id必要',
-            'role_ids.required' => '角色必要',
-        ]);
-        if ($validator->fails()){
-            throw new AdminResponseException(ErrorCode::ERROR,$validator->errors()->first());
-        }
-
-        $this->logic->changeRole($input);
-
-        return $this->response->json(ResponseLogic::successData([]));
-
-    }
 
     /**
      * 查一个

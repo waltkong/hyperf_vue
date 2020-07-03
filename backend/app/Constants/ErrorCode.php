@@ -68,6 +68,9 @@ class ErrorCode extends AbstractConstants
 
     // 权限错误
     const PERMISSION_NO_ACCESS = 70001;// 没有访问权限
+    const PERMISSION_NO_ROUTE = 70002;// 路由不存在
+    const PERMISSION_METHOD_NOT_ALLOWED = 70003;// 方法不允许
+
 
 
     public static function getMessage($code){
@@ -105,7 +108,8 @@ class ErrorCode extends AbstractConstants
             self::INTERFACE_EXCEED_LOAD => '接口负载过高',
 
             self::PERMISSION_NO_ACCESS => '没有访问权限',
-
+            self::PERMISSION_NO_ROUTE => '路由不存在',
+            self::PERMISSION_METHOD_NOT_ALLOWED => '方法不允许',
         ];
 
         return $map[$code] ?? 'undefined error';

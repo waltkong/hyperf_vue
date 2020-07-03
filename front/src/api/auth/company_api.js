@@ -32,3 +32,13 @@ export function deleteOne(data) {
   })
 }
 
+export function companyOptions(data) {
+  return request({
+    url: '/admin/company/companyOptions',
+    method: 'post',
+    data
+  })
+}
+
+
+

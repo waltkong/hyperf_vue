@@ -8,6 +8,7 @@ use App\Controller\BaseController;
 use App\Logics\Admin\CompanyLogic;
 use App\Logics\Common\ResponseLogic;
 use App\Middleware\OperateLogMiddleware;
+use Hyperf\DbConnection\Db;
 use Qbhy\HyperfAuth\Annotation\Auth;
 use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\Middleware;
@@ -39,6 +40,7 @@ class TestController extends BaseController{
      */
     public function queue()
     {
+
         $this->service->push([
             'group@hyperf.io',
             'https://doc.hyperf.io',
@@ -55,9 +57,10 @@ class TestController extends BaseController{
     public function coflow(){
         $a = $this->companylogic->dataList([]);
         $b = $this->companylogic->getOne(['id'=>1]);
-
         return "success";
     }
+
+
 
 
 }

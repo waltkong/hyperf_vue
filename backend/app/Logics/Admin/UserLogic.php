@@ -204,42 +204,6 @@ class UserLogic{
     }
 
 
-    public function changeRole($input){
-        $user = UserModel::query()->where('id',$input['id'])->first();
-        $company = $user->its_company;
-
-        $role_id_array = explode(',',$input['role_ids']);
-        $roles = RoleModel::query()->where('company_id',$user->company_id)->whereIn('id',$role_id_array)->get();
-        $role_array = $roles->toArray();
-        $db_role_array = array_column($role_array,'id');
-
-        if($company->admin_status != CompanyModel::ADMIN_STATUS['SUPER']){
-            foreach ($role_id_array as $k => $v){
-                if(in_array($v, $db_role_array)){
-                    throw new AdminResponseException(ErrorCode::ERROR,'包含非法角色');
-                }
-            }
-        }
-
-        Db::beginTransaction();
-        try{
-            Role2UserModel::query()->where('user_id',$input['id'])->delete();
-
-            foreach ($role_id_array as $k2 => $v2 ){
-                Role2UserModel::query()->insert([
-                    'role_id' => $v2,
-                    'user_id' => $input['id'],
-                ]);
-            }
-            Db::commit();
-        }catch (\Exception $e){
-            Db::rollBack();
-            throw new AdminResponseException(ErrorCode::SYSTEM_INNER_ERROR,$e->getMessage());
-        }
-
-    }
-
-
     public function deleteOne($input)
     {
         Db::beginTransaction();

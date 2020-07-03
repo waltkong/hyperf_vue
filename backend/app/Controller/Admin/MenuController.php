@@ -74,7 +74,6 @@ class MenuController extends BaseController{
     {
         $input = $this->request->all();
 
-
         $validator = $this->validationFactory->make($input,[
             'id' => 'required|numeric',
         ],[
@@ -121,9 +120,9 @@ class MenuController extends BaseController{
     {
         $input = $this->request->all();
 
-        $this->logic->menuParentOptions($input);
+        $result = $this->logic->menuParentOptions($input);
 
-        return $this->response->json(ResponseLogic::successData([]));
+        return $this->response->json(ResponseLogic::successData($result));
     }
 
 

@@ -6,7 +6,7 @@ import { apicode } from '@/configs/apicode'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: 'http://192.168.88.208:81', // process.env.VUE_APP_BASE_API, // url = base url + request url
+  baseURL: 'http://192.168.88.208:9501', // process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 10000 // request timeout
 })
@@ -48,12 +48,6 @@ service.interceptors.response.use(
 
     // if the custom code is not 20000, it is judged as an error.
     if (res.code.toString() !== apicode('SUCCESS').toString()) {
-      Message({
-        message: res.msg || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
       if (res.code.toString() === apicode('USER_TOKEN_ERROR').toString()) {
         // to re-login

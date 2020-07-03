@@ -112,4 +112,43 @@ class CompanyLogic{
        return false;
     }
 
+
+    public function companyOptions($input)
+    {
+        $user = auth()->guard('jwt')->user();
+        $checkCompanySuper = $this->checkCompanyIsSuper($user->company_id);
+
+        if($checkCompanySuper){
+            $list = CompanyModel::query()->get()->toArray();
+
+            $resultFunc = function () use($list){
+                $ret = [];
+                foreach ($list as $k => $v){
+                    $ret[] = [
+                        'key' => $v['id'],
+                        'label' => $v['name'],
+                    ];
+                }
+                return $ret;
+            };
+            return [
+                'data' => $resultFunc(),
+                'default' => $user->company_id
+            ];
+
+        }else{
+            $row = CompanyModel::query()->where('id',$user->company_id)->first();
+            return [
+                'data' => [
+                    [
+                        'key' => $row->id,
+                        'label' => $row->name,
+                    ]
+                ],
+                'default' => $user->company_id
+            ];
+        }
+
+    }
+
 }

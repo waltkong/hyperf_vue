@@ -13,7 +13,10 @@ use App\Middleware\OperateLogMiddleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\Middleware;
 use App\Exception\AdminResponseException;
-
+use Hyperf\HttpServer\Annotation\AutoController;
+/**
+ * @AutoController
+ */
 class LoginController extends BaseController {
 
 

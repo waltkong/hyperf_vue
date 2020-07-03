@@ -25,10 +25,16 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="角色" prop="roles">
+        <el-form-item label="角色" prop="roles" v-if="defaultForm.admin_status === '2'">
           <el-checkbox-group v-model="roleType">
             <el-checkbox  v-for="item in roleOptions" :key="item.key"  :label="item.label"  :value="item.key"  />
           </el-checkbox-group>
+        </el-form-item>
+
+        <el-form-item label="公司" prop="company_id">
+          <el-select v-model="defaultForm.company_id" class="filter-item" placeholder="">
+            <el-option v-for="item in companyOptions" :key="item.key" :label="item.label" :value="item.key" />
+          </el-select>
         </el-form-item>
 
       </el-form>
@@ -47,6 +53,7 @@
   import { storeOrUpdate, getOne } from '@/api/auth/user_api'
   import { thisCompanyRoleOptions } from '@/api/auth/role_api'
   import { isApiSuccess } from '@/configs/apicode'
+  import { companyOptions } from '@/api/auth/company_api'
 
   const adminStatusOptions = [
     { key: '1', label: '超管' },
@@ -80,14 +87,18 @@
           password:'',
           mobile: '',
           admin_status: '2',
-          roleIds: ''
+          roleIds: '',
+          company_id: ''
         },
         roleType:[],   //无法放到defaultForm里，会有bug,所以提出来
         rules: {
-          name: [{ required: true, message: '名称必填', trigger: 'blur' }]
+          nickname: [{ required: true, message: '名称必填', trigger: 'blur' }],
+          mobile: [{ required: true, message: '手机必填', trigger: 'blur' }],
+          company_id: [{ required: true, message: '公司必填', trigger: 'blur' }],
         },
         adminStatusOptions,
         roleOptions:[],
+        companyOptions:[],
       }
     },
     watch: {
@@ -106,7 +117,8 @@
         this.fullscreen = true
       }
 
-      this.getRoleOptions();
+      this.getRoleOptions()
+      this.getCompanyOptions()
 
       if (this.editOrCreate === 'create'){
         this.title = '用户新增'
@@ -166,9 +178,22 @@
       },
       getRoleOptions() {
         thisCompanyRoleOptions().then(response => {
-          console.log(response)
           if (isApiSuccess(response.code)) {
             this.roleOptions = response.data.data
+          }else {
+            this.$message({
+              message: response.msg || 'error',
+              type: 'error',
+              duration: 3000
+            })
+          }
+        })
+      },
+      getCompanyOptions() {
+        companyOptions().then(response => {
+          if (isApiSuccess(response.code)) {
+            this.companyOptions = response.data.data
+            this.defaultForm.company_id = response.data.default
           }else {
             this.$message({
               message: response.msg || 'error',

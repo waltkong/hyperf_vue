@@ -113,6 +113,18 @@ class CompanyController extends BaseController
         return $this->response->json(ResponseLogic::successData([]));
     }
 
+    /**
+     * 公司选项
+     * @Auth("jwt")
+     */
+    public function companyOptions()
+    {
+        $input = $this->request->all();
+
+        $result = $this->logic->companyOptions($input);
+
+        return $this->response->json(ResponseLogic::successData($result));
+    }
 
 }
 

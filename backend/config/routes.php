@@ -15,12 +15,6 @@ use Hyperf\HttpServer\Router\Router;
 Router::addRoute(['GET', 'POST', 'HEAD'], '/', 'App\Controller\IndexController@index');
 
 
-Router::addGroup('/admin/login',function (){
-    Router::post('/login', 'App\Controller\Admin\LoginController@login');
-    Router::post('/register', 'App\Controller\Admin\LoginController@register');
-    Router::post('/logout', 'App\Controller\Admin\LoginController@logout');
-});
-
 //后台需要token访问的
 Router::addGroup('/admin',function (){
 
@@ -46,6 +40,7 @@ Router::addGroup('/admin',function (){
     Router::post('/company/storeOrUpdate', 'App\Controller\Admin\CompanyController@storeOrUpdate');
     Router::post('/company/getOne', 'App\Controller\Admin\CompanyController@getOne3');
     Router::post('/company/deleteOne', 'App\Controller\Admin\CompanyController@deleteOne');
+    Router::post('/company/companyOptions', 'App\Controller\Admin\CompanyController@companyOptions');
 
 
     ## 系统模块
@@ -71,6 +66,7 @@ Router::addGroup('/admin',function (){
 
 },[
     'middleware' => [
+        App\Middleware\NotFoundMiddleware::class,
         App\Middleware\AdminTokenVerifyMiddleware::class,
         App\Middleware\AdminOperateAuthMiddleware::class,
     ]

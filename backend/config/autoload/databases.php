@@ -37,4 +37,30 @@ return [
             ],
         ],
     ],
+//    'gaofang' => [   //host:39.97.228.161  u:test p:Test._88
+//        'driver' => 'mysql',
+//        'host' => '39.97.228.161',
+//        'database' => 'ddos',
+//        'port' => 3306,
+//        'username' => 'test',
+//        'password' => 'Test._88',
+//        'charset' => 'utf8',
+//        'collation' => 'utf8_unicode_ci',
+//        'prefix' => '',
+//        'pool' => [
+//            'min_connections' => 1,
+//            'max_connections' => 10,
+//            'connect_timeout' => 10.0,
+//            'wait_timeout' => 3.0,
+//            'heartbeat' => -1,
+//            'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
+//        ],
+//        'commands' => [
+//            'gen:model' => [
+//                'path' => 'app/Model',
+//                'force_casts' => true,
+//                'inheritance' => 'Model',
+//            ],
+//        ],
+//    ],
 ];
