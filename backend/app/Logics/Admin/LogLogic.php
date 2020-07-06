@@ -34,22 +34,6 @@ class LogLogic{
             'total' =>  $qsFunc()->count()
         ];
         return PageLogic::commonListDataReturn($ret);
-
-    }
-
-    public function storeOrUpdate()
-    {
-
-    }
-
-    public function getOne()
-    {
-
-    }
-
-    public function deleteOne()
-    {
-
     }
 
 }

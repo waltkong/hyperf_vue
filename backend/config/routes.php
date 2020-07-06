@@ -58,16 +58,13 @@ Router::addGroup('/admin',function (){
 
 
     Router::post('/log/dataList', 'App\Controller\Admin\LogController@dataList');
-    Router::post('/log/storeOrUpdate', 'App\Controller\Admin\LogController@storeOrUpdate');
-    Router::post('/log/getOne', 'App\Controller\Admin\LogController@getOne');
-    Router::post('/log/deleteOne', 'App\Controller\Admin\LogController@deleteOne');
 
 
 
 },[
     'middleware' => [
-        App\Middleware\NotFoundMiddleware::class,
         App\Middleware\AdminTokenVerifyMiddleware::class,
+        App\Middleware\NotFoundMiddleware::class,
         App\Middleware\AdminOperateAuthMiddleware::class,
     ]
 ]);

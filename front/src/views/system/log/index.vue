@@ -71,7 +71,7 @@
 <script>
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination'
-  import { dataList, deleteOne } from '@/api/system/config_api'
+  import { dataList, deleteOne } from '@/api/system/log_api'
   import { isApiSuccess } from '@/configs/apicode'
   export default {
     name: 'LogIndex',
@@ -160,7 +160,7 @@
         this.downloadLoading = true
         import('@/vendor/Export2Excel').then(excel => {
           const tHeader = ['id', 'url', '用户', 'ip',  '创建时间']
-          const filterVal = ['id', 'url', 'user_name', 'ip', 'created_at']
+          const filterVal = ['id', 'url', 'user_id', 'ip', 'created_at']
           const data = this.formatJson(filterVal)
           excel.export_json_to_excel({
             header: tHeader,

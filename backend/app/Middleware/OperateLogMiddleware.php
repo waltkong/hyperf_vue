@@ -9,6 +9,7 @@ use App\Constants\ErrorCode;
 use App\Model\System\LogModel;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
+use PDepend\Util\Log;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -66,13 +67,7 @@ class OperateLogMiddleware implements MiddlewareInterface
             ]);
 
         }catch (\Exception $e){
-            return $this->response->json(
-                [
-                    'code' => ErrorCode::BUSINESS_ERROR,
-                    'msg' => $e->getMessage(),
-                    'data' => []
-                ]
-            );
+            Log::log('operate_log_error:' . $e->getMessage());
         }
         return $handler->handle($request);
     }
