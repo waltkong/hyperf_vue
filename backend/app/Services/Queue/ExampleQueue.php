@@ -21,7 +21,7 @@ class ExampleQueue{
 
     /**
      * 生产消息.
-     * @param $params 数据
+     * @param mixed $params  数据
      * @param int $delay 延时时间 单位秒
      */
     public function push($params, int $delay = 0): bool
