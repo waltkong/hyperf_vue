@@ -63,9 +63,9 @@ Router::addGroup('/admin',function (){
 
 },[
     'middleware' => [
-        App\Middleware\AdminTokenVerifyMiddleware::class,
-        App\Middleware\NotFoundMiddleware::class,
-        App\Middleware\AdminOperateAuthMiddleware::class,
+        App\Middleware\AdminTokenVerifyMiddleware::class, //用户身份信息认证中间件
+        App\Middleware\NotFoundMiddleware::class, // 找不到路由中间件
+        App\Middleware\AdminOperateAuthMiddleware::class, // 操作权限中间件
     ]
 ]);
 
