@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50728
 File Encoding         : 65001
 
-Date: 2020-06-30 09:12:59
+Date: 2020-07-11 10:10:11
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -31,11 +31,12 @@ CREATE TABLE `system_config` (
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of system_config
 -- ----------------------------
+INSERT INTO `system_config` VALUES ('1', 'system', 'site_open', '1', 'string', '0', '1', '2020-06-17 19:20:34', '2020-06-17 19:20:34', null);
 
 -- ----------------------------
 -- Table structure for `system_log`
@@ -64,7 +65,6 @@ CREATE TABLE `system_log` (
 DROP TABLE IF EXISTS `system_menu`;
 CREATE TABLE `system_menu` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `company_id` int(11) DEFAULT NULL,
   `parent_id` int(11) DEFAULT '0' COMMENT '父id',
   `level` tinyint(3) DEFAULT NULL COMMENT '层级，parent_id=0时level=1，然后依次递增',
   `name` varchar(50) DEFAULT NULL,
@@ -72,16 +72,21 @@ CREATE TABLE `system_menu` (
   `need_auth` tinyint(3) DEFAULT '0' COMMENT '1需要权限验证 0 不需要',
   `is_menu` tinyint(3) DEFAULT '1' COMMENT '是菜单 1是0否',
   `is_only_super_admin` tinyint(3) DEFAULT '0' COMMENT '仅仅超级管理员可操作 1必须 0不必要',
+  `is_only_super_company` tinyint(3) DEFAULT '0' COMMENT '只有超管公司有权限 1是0否',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of system_menu
 -- ----------------------------
-INSERT INTO `system_menu` VALUES ('1', '1', '0', '1', '用户', null, '0', '1', '0', '2020-06-18 19:27:03', '2020-06-18 19:27:06', null);
+INSERT INTO `system_menu` VALUES ('1', '0', '1', '系统', 'system', '0', '1', '0', '0', '2020-06-18 19:27:03', '2020-07-01 10:09:36', null);
+INSERT INTO `system_menu` VALUES ('2', '1', '2', '菜单管理', '/admin/menu/dataList', '1', '1', '0', '0', null, '2020-07-01 10:09:36', null);
+INSERT INTO `system_menu` VALUES ('3', '1', '2', '菜单编辑', '/admin/menu/storeOrUpdate', '1', '0', '0', '0', null, '2020-07-01 10:09:37', null);
+INSERT INTO `system_menu` VALUES ('4', '1', '2', '菜单删除', '/admin/menu/deleteOne', '1', '0', '0', '0', null, '2020-07-01 10:09:38', null);
+INSERT INTO `system_menu` VALUES ('5', '1', '2', '菜单查看', '/admin/menu/getOne', '1', '0', '0', '0', null, '2020-07-01 10:09:40', null);
 
 -- ----------------------------
 -- Table structure for `user_company`
@@ -103,7 +108,7 @@ CREATE TABLE `user_company` (
 -- ----------------------------
 -- Records of user_company
 -- ----------------------------
-INSERT INTO `user_company` VALUES ('1', '超管', '平台管理', '13450290122', '小马', '1', '2020-06-17 19:20:34', '2020-06-17 19:20:34', null);
+INSERT INTO `user_company` VALUES ('1', '超管', '平台管理1', '13450290122', '小马', '1', '2020-06-17 19:20:34', '2020-06-30 13:53:58', null);
 
 -- ----------------------------
 -- Table structure for `user_role`
@@ -118,11 +123,14 @@ CREATE TABLE `user_role` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   `company_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of user_role
 -- ----------------------------
+INSERT INTO `user_role` VALUES ('1', '超管1', '超管1', null, '2020-07-02 19:42:44', null, '1');
+INSERT INTO `user_role` VALUES ('2', 'sdfsdf', 'sfsd', null, '2020-07-02 19:42:44', null, '1');
+INSERT INTO `user_role` VALUES ('3', '234', '234234', null, '2020-07-02 19:42:46', null, '1');
 
 -- ----------------------------
 -- Table structure for `user_role_menu`
